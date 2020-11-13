@@ -5,7 +5,7 @@ import api from '../../services/api';
 
 import logoImg from '../../assets/logo.svg';
 
-import { Title, Form, Repositories } from './styles';
+import { Title, Form, Error, Repositories } from './styles';
 
 interface Repository {
   full_name: string;
@@ -18,16 +18,27 @@ interface Repository {
 
 const Dashboard: React.FC = () => {
   const [repoSearch, setRepoSearch] = useState('');
+  const [inputError, setInputError] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
   const handleAddRepository = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      const { data } = await api.get<Repository>(`repos/${repoSearch}`);
+      if (!repoSearch) {
+        setInputError('Field cannot be empty');
+        return;
+      }
 
-      setRepositories(repos => repos.concat(data));
-      setRepoSearch('');
+      try {
+        const { data } = await api.get<Repository>(`repos/${repoSearch}`);
+
+        setRepositories(repos => repos.concat(data));
+        setRepoSearch('');
+        setInputError('');
+      } catch {
+        setInputError('Repository could not be fetched');
+      }
     },
     [repoSearch],
   );
@@ -37,15 +48,17 @@ const Dashboard: React.FC = () => {
       <img src={logoImg} alt="Github Explorer" />
       <Title>Explore Github repositories</Title>
 
-      <Form onSubmit={handleAddRepository}>
+      <Form onSubmit={handleAddRepository} hasError={!!inputError}>
         <input
           type="text"
           placeholder="Insert the repository name, i.e., facebook/react"
           value={repoSearch}
-          onChange={e => setRepoSearch(e.target.value)}
+          onChange={e => setRepoSearch(e.target.value.trim())}
         />
         <button type="submit">Search</button>
       </Form>
+
+      {inputError && <Error>{inputError}</Error>}
 
       <Repositories>
         {repositories.map(repository => (
