@@ -30,6 +30,15 @@ const Dashboard: React.FC = () => {
         return;
       }
 
+      const repository = repositories.find(
+        repo => repo.full_name.toLowerCase() === repoSearch.toLowerCase(),
+      );
+
+      if (repository) {
+        setInputError('Repository already on searched list');
+        return;
+      }
+
       try {
         const { data } = await api.get<Repository>(`repos/${repoSearch}`);
 
@@ -40,7 +49,7 @@ const Dashboard: React.FC = () => {
         setInputError('Repository could not be fetched');
       }
     },
-    [repoSearch],
+    [repoSearch, repositories],
   );
 
   return (
