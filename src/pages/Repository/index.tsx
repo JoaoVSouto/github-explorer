@@ -1,10 +1,10 @@
 import React from 'react';
 import { useRouteMatch, Link } from 'react-router-dom';
-import { FiChevronLeft } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 import logoImg from '../../assets/logo.svg';
 
-import { Header, RepositoryInfo } from './styles';
+import { Header, RepositoryInfo, Issues } from './styles';
 
 interface RepositoryParams {
   name: string;
@@ -55,6 +55,17 @@ const Repository: React.FC = () => {
           </li>
         </ul>
       </RepositoryInfo>
+
+      <Issues>
+        <a href="#!">
+          <div>
+            <strong>gostack-desafio-conceitos-react-native</strong>
+            <p>lorem ipsum</p>
+          </div>
+
+          <FiChevronRight size={32} />
+        </a>
+      </Issues>
     </>
   );
 };
